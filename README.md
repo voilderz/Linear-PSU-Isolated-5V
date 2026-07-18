@@ -1,47 +1,58 @@
-# Linear-PSU-High-Precision
+# Linear-PSU-Isolated-5V
 
-This project is an industrial-grade power module designed for high-stability electronic systems requiring precision voltage regulation. The design focuses on ultra-low noise energy delivery, thermal stability, and electrical safety.
-
----
-
-### Changelog - v1.1 (February 2026)
-
-* **Safety Seal:** Integrated **B72314S2271K101** MOV to the mains input for enhanced surge and transient protection.
-* **Isolation Discipline:** Established a complete physical isolation barrier between AC and DC zones to eliminate arcing risks.
-* **Visual Identity:** Branded the PCB with **VOI** logo and v1.1 versioning on the silkscreen layer for professional traceability.
-
----
+Şebeke beslemeli, izoleli 5V DC güç kaynağı modülü.
 
 ## Overview
-This module converts $230\text{V}$ AC grid voltage into highly regulated, low-ripple $5\text{V}$ and $15\text{V}$ DC outputs. It is engineered to serve as a reliable power platform for sensitive sensor networks and control units.
+
+Bu proje, 230V AC şebeke gerilimini alıp izole bir transformatör, tam dalga köprü doğrultucu ve anahtarlamalı step-down regülatör kullanarak kararlı **5V DC** çıkış üreten bir güç kaynağı kartıdır. Tasarım; aşırı akım koruması, gerilim darbe koruması ve görsel durum göstergesi (LED) içerir.
 
 ## Technical Specifications
+
 | Parameter | Value |
-| :--- | :--- |
-| **Input Voltage** | $230\text{V}$ AC ($50\text{/60Hz}$) |
-| **Output Voltage** | $5\text{V}$ DC Regulated |
-| **Continuous Current** | $1.916\text{ A}$ Max |
-| **Precision** | $0.1\%$ Tolerance (Voltage Reference Rail) |
-| **Efficiency** | Up to $95\%$ (Traco Power Integration) |
+|---|---|
+| Input Voltage | 230V AC (50/60Hz) |
+| Output Voltage | 5V DC (Regulated) |
+| Regulator Efficiency | TSR3-2450N module, up to 90%+ (per manufacturer) |
+| Isolation | Galvanic isolation via transformer |
+| Protection | Input fuse (F1), MOV (RV1), output fuse (F2) |
 
-## Key Engineering Features
-* **High-Voltage Isolation:** A **$2.0\text{ mm}$ clearance** is maintained between primary (AC) and secondary (DC) stages, fully compliant with **IPC-2221** safety standards.
-* **Thermal Management:** Power traces are widened to **$1.5\text{ mm}$ ($35\mu\text{m}$ copper)** and reinforced with "Teardrops" at pad junctions to ensure mechanical and thermal integrity under high current loads.
-* **Precision Components:** Implementation of **YR1B1K0CC** series $0.1\%$ tolerance metal film resistors to minimize thermal drift and maintain long-term voltage accuracy.
-* **EMI Shielding:** Integrated **Copper Pours** (Ground Planes) across all layers to suppress electromagnetic interference and ensure signal integrity.
+## Circuit Architecture
 
-## Bill of Materials (BOM)
-| Reference | Component | MPN | Impact |
-| :--- | :--- | :--- | :--- |
-| **U1** | Regulator | TSR 3-2450 | High-efficiency switching regulation. |
-| **TR1** | Transformer | ASL171112 | Certified primary-side galvanic isolation. |
-| **R1** | Precision Resistor | MFR-25FTE52-1K | $0.1\%$ stability for feedback loops. |
-| **C1** | Capacitor | B41858C5688M000 | 6800uF Low-ESR ripple suppression. |
+1. **Input Protection:** F1 fuse (Line side) and RV1 varistor (B72314S2271K101, 275VAC MOV) protect against mains-borne voltage transients.
+2. **Isolation:** TR1 (ASL171112) transformer provides galvanic isolation between AC and DC stages.
+3. **Rectification:** D1 (GBU810 bridge rectifier) converts AC to DC.
+4. **Filtering:** C1 (electrolytic) and C4 (film) capacitors filter the rectified voltage.
+5. **Regulation:** U1 (TSR3-2450N, Traco Power) regulates the output to a stable 5V DC.
+6. **Output Filtering & Indicator:** C2/C3 capacitors reduce output ripple; D2 LED (current-limited by R1, 1kΩ, 1% tolerance) serves as a power indicator.
+7. **Output Protection:** F2 fuse provides a second layer of protection against load-side short circuits.
 
-> For the comprehensive industrial-grade BOM, see: [/BOM/BOM_Linear_PSU_Extended.csv](./BOM/BOM_Linear_PSU_Extended.csv)
+## Key Design Decisions
+
+- **Fuse-varistor ordering:** F1 is placed before RV1 (on the Line side), ensuring the circuit fails safely open if the varistor fails short.
+- **Dual-stage filtering:** Both input and output stages combine electrolytic and film capacitors to suppress low- and high-frequency noise together.
+- **Simple, reliable topology:** Instead of a custom feedback loop, a certified off-the-shelf DC-DC module (TSR3-2450N) is used to reduce design complexity and failure risk.
+
+## Bill of Materials (Summary)
+
+| Reference | Component | MPN | Function |
+|---|---|---|---|
+| TR1 | Transformer | ASL171112 | Galvanic isolation |
+| D1 | Bridge Rectifier | GBU810_T0_00601 | AC-DC conversion |
+| U1 | Regulator | TSR3-2450N | 5V DC regulation |
+| RV1 | Varistor | B72314S2271K101 | Voltage transient protection |
+| F1 | Fuse (Input) | Fuse_Small | Overcurrent protection |
+| F2 | Fuse (Output) | Fuse_Small | Load-side protection |
+| R1 | Resistor | 1kΩ | LED current limiting |
+| D2 | LED | - | Power indicator |
+
+## Future Improvements
+
+- Add EMI/EMC filtering (X/Y capacitors) on the input stage
+- Measure and verify creepage/clearance distances against relevant safety standards
+- Evaluate inrush current limiting on the transformer primary side
 
 ## Project Structure
-* **/Hardware:** KiCad schematic and PCB layout source files.
-* **/Production:** Production-ready **Gerber** and **Drill** files (ZIP archive).
-* **/Docs:** Full schematic PDF and critical component datasheets.
-* **/Images:** 3D renders and technical captures.
+
+- `/Hardware`: KiCad schematic and PCB layout source files
+- `/Docs`: Schematic PDF and component datasheets
+- `/Images`: Board renders and technical captures
