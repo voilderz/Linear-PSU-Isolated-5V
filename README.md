@@ -76,3 +76,12 @@ Bu proje, 230V AC şebeke gerilimini alıp izole bir transformatör, tam dalga k
 - `/Production`: Gerber and drill files
 - `/Docs`: Schematic PDF and component datasheets
 - `/Images`: PCB renders (top/bottom) and technical captures
+
+---
+
+## Author
+
+**Batın Sarı**
+Linear-PSU-Isolated-5V
+
+All Rights Reserved
